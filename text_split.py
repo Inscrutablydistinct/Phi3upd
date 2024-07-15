@@ -27,5 +27,4 @@ def text_split(md):
         for chunk in docs:
             list_of_documents.append(Document(page_content=chunk.page_content, metadata=md[j]))
         j+=1
-        print(j)
     return list_of_documents
