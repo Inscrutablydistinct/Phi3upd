@@ -164,9 +164,9 @@ def ans(context, question):
             {"role": "user", "content": prompt},
        ],)
    print(f"\n\n\n{prompt}\n\n\n")
-   print("Response:")
-   print(response.choices[0].message.content)
-   print()
+   # print("Response:")
+   # print(response.choices[0].message.content)
+   # print()
    for chunk in stream:
        if chunk.choices[0].delta.content is not None:
           print(chunk.choices[0].delta.content, end="")
