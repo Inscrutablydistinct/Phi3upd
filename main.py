@@ -24,7 +24,7 @@ publication_date
 arxiv_id
 results
 
-Note:
+Important Notes:
 - All attributes except 'keywords' may or may not be present in the given query.
 - If a query specifies a date, include "<", ">", ">=", "<=", "=" to denote before, after, after and on, before and on, and on the publication date, respectively.
 - Separate the user query into the main query and the metadata attributes.
