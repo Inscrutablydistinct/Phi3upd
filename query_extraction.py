@@ -31,7 +31,7 @@ def generate_md(Question, query):
     text = response_json['choices'][0]['message']['content']
     text = process_llm_response(text)
     print(text)
-    pattern = r'\["(.*?)",\s*{(?:\s*".*?":\s*".*?"\s*,?\s*)*}\]'
+    pattern = r'\["([^"]+)",\s*({[^}]+})\]'
     match = re.search(pattern, text)
     if match:
         output_list = match.group(0)
