@@ -154,19 +154,23 @@ def ans(context, question):
 
    """
 
-   response = client.chat.completions.create(
-   model="phi3",
-   temperature=0.4,
-   stream=True,
-   n=1,
-   messages=[
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": prompt},
-   ],)
+   stream = client.chat.completions.create(
+       model="phi3",
+       temperature=0.4,
+       stream=True,
+       n=1,
+       messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt},
+       ],)
    print(f"\n\n\n{prompt}\n\n\n")
    print("Response:")
    print(response.choices[0].message.content)
    print()
+   for chunk in stream:
+       if chunk.choices[0].delta.content is not None:
+          print(chunk.choices[0].delta.content, end="")
+
 
 query = input("Enter your query here. Write 'stop' to terminate running.")
 
