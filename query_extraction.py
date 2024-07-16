@@ -12,7 +12,7 @@ def generate_md(Question, query):
     prompt = f"{Question}{query}"
     data = {
         "model": "phi3",
-        "temperature": 0.1,
+        "temperature": 0.3,
         "n": 1,
         "messages": [
             {"role": "user", "content": prompt}
