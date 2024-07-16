@@ -124,7 +124,7 @@ The answer should only be a list and no other content whatsoever. Please print t
 
 list_of_documents = text_split.text_split(d)
 client = openai.OpenAI(
-    base_url="https://4.188.251.18:11434/v1",
+    base_url="https://localhost/v1",
     api_key="nokeyneeded",
 )
 def ans(context, question):
