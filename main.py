@@ -2,7 +2,8 @@ from query_extraction import generate_md
 import text_split
 from model_param import CFG
 from embeddings_and_context import make_context
-from process_output import llm_ans
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import urllib.parse
 from filter_by_metadata import filter_data
 from data_preprocess import preprocess
 import json
@@ -125,69 +126,84 @@ The answer should only be a list and no other content whatsoever. Please print t
 list_of_documents = text_split.text_split(d)
 
 client = openai.OpenAI(
-    base_url="http://4.188.251.18:11434/v1",
+    base_url="http://localhost:11434/v1",
     api_key="nokeyneeded",
 )
+
 def ans(context, question):
-   prompt = f"""<|system|>
-   
-   You are given some extracted parts in a paragraph from research papers along with a question. Everything in the extract may not be important. Choose carefully!
+    prompt = f"""
+    You are given some extracted parts in a paragraph from research papers along with a question. Everything in the extract may not be important. Choose carefully!
+    
+    If you don't know the answer, just say "I don't know." Don't try to make up an answer.
+    
+    It is very important that you ALWAYS answer the question in the same language the question is in. Remember to always do that.
+    
+    Your answer should not be more than {CFG.max_len} words long.
+    
+    The answer should be grammatically correct and start from the beginning of a sentence.
+    
+    Use the following pieces of context to answer the question at the end.
+    
+    Context: {context}
+    
+    Question is below. Remember to answer only in English:
+    
+    Question: {question}
+    """
 
-   If you don't know the answer, just say "I don't know." Don't try to make up an answer.
-
-   It is very important that you ALWAYS answer the question in the same language the question is in. Remember to always do that.
-
-   Your answer should not be more than {CFG.max_len} words long.
-
-   The answer should be grammatically correct and start from the beginning of a sentence.
-
-   Use the following pieces of context to answer the question at the end.
-
-   Context: {context}
-
-   Question is below. Remember to answer only in English:
-
-   Question: {question}
-
-   <|end|>
-
-   <|assistant|>
-
-   """
-
-   stream = client.chat.completions.create(
-       model="phi3",
-       temperature=0.4,
-       stream=True,
-       n=1,
-       messages=[
+    response = client.chat.completions.create(
+        model="phi3",
+        temperature=0.4,
+        n=1,
+        messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt},
-       ],)
-   print(f"\n\n\n{prompt}\n\n\n")
-   # print("Response:")
-   # print(response.choices[0].message.content)
-   # print()
-   for chunk in stream:
-       if chunk.choices[0].delta.content is not None:
-          print(chunk.choices[0].delta.content, end="")
+        ],
+    )
+    answer = response['choices'][0]['message']['content']
+    return answer
 
+class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
-query = input("Enter your query here. Write 'stop' to terminate running.")
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+        self.wfile.write(b"Use POST method to interact with this server.")
 
-while (query.lower() != "stop"):
-    
-    start_time = time.time()
-    
-    out = generate_md(Question,query,client)
-    
-    filtered_metadata = filter_data(d,out[1])
-    
-    context = preprocess(make_context(list_of_documents, filtered_metadata[0],out))
+    def do_POST(self):
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length)
+        query_data = urllib.parse.parse_qs(post_data.decode('utf-8'))
+        query = query_data.get('query', [None])[0]
 
-    print(context)
-    ans(context,out[0])
-    print("Source Document: "+ filtered_metadata[0]['title'])
-    
-    print("Time Taken: "+ str(time.time() - start_time))
-    query = input("Enter your query here. Write 'stop' to terminate running.")
+        if query:
+            start_time = time.time()
+
+            out = generate_md(Question, query, client)
+            filtered_metadata = filter_data(d, out[1])
+            context = preprocess(make_context(list_of_documents, filtered_metadata[0], out))
+            answer = ans(context, out[0])
+            response_data = {
+                "answer": answer,
+                "source_document": filtered_metadata[0]['title'],
+                "time_taken": time.time() - start_time
+            }
+            self.send_response(200)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(response_data).encode('utf-8'))
+        else:
+            self.send_response(400)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps({"error": "No query provided"}).encode('utf-8'))
+
+def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=8080):
+    server_address = ('', port)
+    httpd = server_class(server_address, handler_class)
+    print(f'Starting httpd server on port {port}...')
+    httpd.serve_forever()
+
+if __name__ == "__main__":
+    run()
