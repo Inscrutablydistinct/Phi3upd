@@ -179,7 +179,7 @@ while (query.lower() != "stop"):
     
     start_time = time.time()
     
-    out = generate_md(Question,query)
+    out = generate_md(Question,query,client)
     
     filtered_metadata = filter_data(d,out[1])
     
