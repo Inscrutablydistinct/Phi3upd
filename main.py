@@ -1,4 +1,4 @@
-from query_extraction import generate_md
+7from query_extraction import generate_md
 import text_split
 from model_param import CFG
 from embeddings_and_context import make_context
@@ -125,7 +125,7 @@ The answer should only be a list and no other content whatsoever. Please print t
 list_of_documents = text_split.text_split(d)
 
 client = openai.OpenAI(
-    base_url="http://localhost:11434/v1",
+    base_url="https://4.188.251.18:11434/v1",
     api_key="nokeyneeded",
 )
 def ans(context, question):
