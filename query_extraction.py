@@ -20,7 +20,7 @@ def generate_md(Question, query):
     }
 
     response = subprocess.run(
-        ["curl", "-X", "POST", "http://0.0.0.0:11434/v1/chat/completions",
+        ["curl", "-X", "POST", "http://localhost:11434/v1/chat/completions",
          "-H", "Content-Type: application/json",
          "-H", "Authorization: Bearer nokeyneeded",
          "-d", json.dumps(data)],
