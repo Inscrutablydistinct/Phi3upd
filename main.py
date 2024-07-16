@@ -124,7 +124,7 @@ The answer should only be a list and no other content whatsoever. Please print t
 
 list_of_documents = text_split.text_split(d)
 client = openai.OpenAI(
-    base_url="https://4.188.251.18:11434/v1/chat/completions/create",
+    base_url="https://4.188.251.18:11434/v1",
     api_key="nokeyneeded",
 )
 def ans(context, question):
@@ -154,7 +154,7 @@ def ans(context, question):
 
    """
 
-   stream = client(
+   stream = client.chat.completions.create(
        model="phi3",
        temperature=0.4,
        stream=True,
