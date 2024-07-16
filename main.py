@@ -1,4 +1,4 @@
-7from query_extraction import generate_md
+from query_extraction import generate_md
 import text_split
 from model_param import CFG
 from embeddings_and_context import make_context
