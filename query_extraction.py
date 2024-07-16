@@ -8,7 +8,7 @@ with open('metadata.json') as f:
     d = json.load(f)
 
 
-def generate_md(Question, query):
+def generate_md(Question, query, client):
     prompt = f"{Question}{query}"
     data = {
         "model": "phi3",
