@@ -199,7 +199,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps({"error": "No query provided"}).encode('utf-8'))
 
-def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=8080):
+def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=11434):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
     print(f'Starting httpd server on port {port}...')
