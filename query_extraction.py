@@ -18,7 +18,7 @@ def generate_md(Question, query):
             {"role": "user", "content": prompt}
         ]
     }
-
+    print(prompt)
     response = subprocess.run(
         ["curl", "-X", "POST", "http://localhost:11434/v1/chat/completions",
          "-H", "Content-Type: application/json",
