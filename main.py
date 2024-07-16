@@ -182,6 +182,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             query = query_data.get('query', [None])[0]
 
             if query:
+                print("hello")
                 start_time = time.time()
 
                 out = generate_md(Question, query, client)
