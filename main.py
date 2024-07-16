@@ -122,14 +122,16 @@ Examples:
     Main Query: "Give me a brief summary of the research done by the author A. Rocks."
     Output: ["Give me a brief summary of the research", {"author": "A. Rocks"}]
 The answer should only be a list and no other content whatsoever. Please print the Output for the following query:\n"""
-
+# Splitting documents
 list_of_documents = text_split.text_split(d)
 
+# Initializing the OpenAI client
 client = openai.OpenAI(
     base_url="http://4.188.251.18:11434/v1",
     api_key="nokeyneeded",
 )
 
+# Function to generate answer
 def ans(context, question):
     prompt = f"""
     You are given some extracted parts in a paragraph from research papers along with a question. Everything in the extract may not be important. Choose carefully!
@@ -163,6 +165,7 @@ def ans(context, question):
     answer = response['choices'][0]['message']['content']
     return answer
 
+# HTTP Request Handler
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
@@ -172,32 +175,39 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(b"Use POST method to interact with this server.")
 
     def do_POST(self):
-        content_length = int(self.headers['Content-Length'])
-        post_data = self.rfile.read(content_length)
-        query_data = urllib.parse.parse_qs(post_data.decode('utf-8'))
-        query = query_data.get('query', [None])[0]
+        try:
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            query_data = urllib.parse.parse_qs(post_data.decode('utf-8'))
+            query = query_data.get('query', [None])[0]
 
-        if query:
-            start_time = time.time()
+            if query:
+                start_time = time.time()
 
-            out = generate_md(Question, query, client)
-            filtered_metadata = filter_data(d, out[1])
-            context = preprocess(make_context(list_of_documents, filtered_metadata[0], out))
-            answer = ans(context, out[0])
-            response_data = {
-                "answer": answer,
-                "source_document": filtered_metadata[0]['title'],
-                "time_taken": time.time() - start_time
-            }
-            self.send_response(200)
+                out = generate_md(Question, query, client)
+                filtered_metadata = filter_data(d, out[1])
+                context = preprocess(make_context(list_of_documents, filtered_metadata[0], out))
+                answer = ans(context, out[0])
+                response_data = {
+                    "answer": answer,
+                    "source_document": filtered_metadata[0]['title'],
+                    "time_taken": time.time() - start_time
+                }
+                self.send_response(200)
+                self.send_header("Content-type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps(response_data).encode('utf-8'))
+            else:
+                self.send_response(400)
+                self.send_header("Content-type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": "No query provided"}).encode('utf-8'))
+        except Exception as e:
+            self.send_response(500)
             self.send_header("Content-type", "application/json")
             self.end_headers()
-            self.wfile.write(json.dumps(response_data).encode('utf-8'))
-        else:
-            self.send_response(400)
-            self.send_header("Content-type", "application/json")
-            self.end_headers()
-            self.wfile.write(json.dumps({"error": "No query provided"}).encode('utf-8'))
+            self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+            print(f"Error handling POST request: {str(e)}")
 
 def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=11434):
     server_address = ('', port)
