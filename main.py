@@ -198,6 +198,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(json.dumps(response_data).encode('utf-8'))
             else:
+                print("hi")
                 self.send_response(400)
                 self.send_header("Content-type", "application/json")
                 self.end_headers()
