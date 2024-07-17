@@ -22,7 +22,7 @@ def generate_md(Question, query):
     }
 
     result = subprocess.run(
-        ['curl', '-X', 'POST', 'http://localhost:11434/v1/chat/completions',
+        ['curl', '-X', 'POST', 'http://4.188.251.18:11434/v1/chat/completions',
          '-H', 'Content-Type: application/json', '-H', 'Authorization: Bearer nokeyneeded',
          '-d', json.dumps(data)],
         capture_output=True,
