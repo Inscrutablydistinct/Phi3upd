@@ -162,8 +162,8 @@ def ans(context, question):
             {"role": "user", "content": prompt},
         ],
     )
-    answer = response['choices'][0]['message']['content']
-    return answer
+    return response.choices[0].message.content
+ 
     
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
