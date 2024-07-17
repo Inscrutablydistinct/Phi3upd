@@ -212,18 +212,6 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             print(f"Error handling POST request: {str(e)}")
 
 def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=8000):
-   
-    response = client.chat.completions.create(
-        model="phi3",
-        temperature=0.4,
-        n=1,
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "What is a supernova?"},
-        ],
-    )
-    print("Response:")
-    print(response.choices[0].message.content)
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
     print(f'Starting httpd server on port {port}...')
