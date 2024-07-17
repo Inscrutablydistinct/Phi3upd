@@ -26,6 +26,7 @@ results
 
 Note:
 - All attributes except 'keywords' may or may not be present in the given query.
+- The main query should also have the keywords(if any).
 - If a query specifies a date, include "<", ">", ">=", "<=", "=" to denote before, after, after and on, before and on, and on the publication date, respectively.
 - Separate the user query into the main query and the metadata attributes.
 - If the query includes a metadata attribute term (e.g., author) without a specific name, include it in the main query instead of identifying it.
@@ -120,7 +121,7 @@ Examples:
     Identified Attributes:
     author: 'A. Rocks'
     Main Query: "Give me a brief summary of the research done by the author A. Rocks."
-    Output: ["Give me a brief summary of the research", {"author": "A. Rocks"}]
+    Output: ["Give me a brief summary of the research done by the author A. Rocks.", {"author": "A. Rocks"}]
 The answer should only be a list and no other content whatsoever. Please print the Output for the following query:\n"""
 # Splitting documents
 list_of_documents = text_split.text_split(d)
