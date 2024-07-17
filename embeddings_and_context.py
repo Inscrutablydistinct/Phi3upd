@@ -49,7 +49,7 @@ def make_context(list_of_documents, top_md, out):
         query_embedding = np.array(query_embedding).reshape(1, -1)
 
         similarities = cosine_similarity(query_embedding, filtered_embeddings).flatten()
-        top_k_indices = similarities.argsort()[-2:][::-1]
+        top_k_indices = similarities.argsort()[-4:][::-1]
 
         top_k_documents = [filtered_documents[i] for i in range(len(filtered_documents)) if i in top_k_indices]
         context = ""
