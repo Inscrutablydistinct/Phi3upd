@@ -10,44 +10,32 @@ with open('metadata.json') as f:
 def generate_md(Question, query):
     prompt = f"{Question}{query}"
     print(f"Prompt: {prompt}")  # Debugging statement
-    data = {
-        "model": "phi3",
-        "temperature": 0.4,
-        "n": 1,
-        "messages": [
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": prompt},
-        ],
-        "stream": False
-    }
+    response = client.chat.completions.create(
+      model="phi3",
+      temperature=0.4,
+      n=1,
+      messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": prompt},
+      ],)
+    text = response.choices[0].message.content
 
-    result = subprocess.run(
-        ['curl', '-X', 'POST', 'http://4.188.251.18:11434/v1/chat/completions',
-         '-H', 'Content-Type: application/json', '-H', 'Authorization: Bearer nokeyneeded',
-         '-d', json.dumps(data)],
-        capture_output=True,
-        text=True
-    )
+    # if result.returncode != 0:
+    #     print(f"Error running curl: {result.stderr}")  # Debugging statement
+    #     return "[]"
     
-    if result.returncode != 0:
-        print(f"Error running curl: {result.stderr}")  # Debugging statement
-        return "[]"
+    # try:
+    #     response = json.loads(result.stdout)
+    #     text = response['choices'][0]['message']['content']
+    text = process_llm_response(text)
+    print(f"LLM Response: {text}")  # Debugging statement
     
-    try:
-        response = json.loads(result.stdout)
-        text = response['choices'][0]['message']['content']
-        text = process_llm_response(text)
-        print(f"LLM Response: {text}")  # Debugging statement
-
-        pattern = r'\["([^"]+)",\s*({[^}]+})\]'
-        match = re.search(pattern, text)
-        if match:
-            output_list = match.group(0)
-            return ast.literal_eval(output_list)
-        else:
-            print("No match found")
-            return "[]"
-    except Exception as e:
-        print(f"Error processing response: {e}")  # Debugging statement
+    pattern = r'\["([^"]+)",\s*({[^}]+})\]'
+    match = re.search(pattern, text)
+    if match:
+        output_list = match.group(0)
+        return ast.literal_eval(output_list)
+    else:
+        print("No match found")
         return "[]"
 
