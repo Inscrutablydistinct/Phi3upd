@@ -164,8 +164,7 @@ def ans(context, question):
     )
     answer = response['choices'][0]['message']['content']
     return answer
-
-# HTTP Request Handler
+    
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -177,8 +176,10 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         try:
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
-            query_data = urllib.parse.parse_qs(post_data.decode('utf-8'))
-            query = query_data.get('query', [None])[0]
+            request_data = json.loads(post_data.decode('utf-8'))
+
+            # Get the query from the JSON data
+            query = request_data.get('messages', [None])[1].get('content')
 
             if query:
                 print("hello")
