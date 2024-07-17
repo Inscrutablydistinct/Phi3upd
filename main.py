@@ -180,42 +180,32 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(b"Use POST method to interact with this server.")
 
     def do_POST(self):
-        try:
-            content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length)
-            query_data = urllib.parse.parse_qs(post_data.decode('utf-8'))
-            query = "What is the abstract of the study about bone cancer in dinosaurs?"
-            #query_data.get('query', [None])[0]
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length)
+        query_data = urllib.parse.parse_qs(post_data.decode('utf-8'))
+        query = query_data.get('query', [None])[0]
 
-            if query:
-                print("hello")
-                start_time = time.time()
+        if query:
+            start_time = time.time()
 
-                out = generate_md(Question, query, client)
-                filtered_metadata = filter_data(d, out[1])
-                context = preprocess(make_context(list_of_documents, filtered_metadata[0], out))
-                answer = ans(context, out[0])
-                response_data = {
-                    "answer": answer,
-                    "source_document": filtered_metadata[0]['title'],
-                    "time_taken": time.time() - start_time
-                }
-                self.send_response(200)
-                self.send_header("Content-type", "application/json")
-                self.end_headers()
-                self.wfile.write(json.dumps(response_data).encode('utf-8'))
-            else:
-                print("hi")
-                self.send_response(400)
-                self.send_header("Content-type", "application/json")
-                self.end_headers()
-                self.wfile.write(json.dumps({"error": "No query provided"}).encode('utf-8'))
-        except Exception as e:
-            self.send_response(500)
+            out = generate_md(Question, query)
+            filtered_metadata = filter_data(d, out[1])
+            context = preprocess(make_context(list_of_documents, filtered_metadata[0], out))
+            answer = ans(context, out[0])
+            response_data = {
+                "answer": answer,
+                "source_document": filtered_metadata[0]['title'],
+                "time_taken": time.time() - start_time
+            }
+            self.send_response(200)
             self.send_header("Content-type", "application/json")
             self.end_headers()
-            self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
-            print(f"Error handling POST request: {str(e)}")
+            self.wfile.write(json.dumps(response_data).encode('utf-8'))
+        else:
+            self.send_response(400)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps({"error": "No query provided"}).encode('utf-8'))
 
 def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=11434):
     server_address = ('', port)
