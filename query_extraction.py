@@ -8,18 +8,30 @@ with open('metadata.json') as f:
     d = json.load(f)
 
 
-def generate_md(Question, query, client):
+def generate_md(Question, query):
     prompt = f"{Question}{query}"
     print(prompt)
-    response = client.chat.completions.create(
-       model="phi3",
-       temperature=0.4,
-       n=1,
-       messages=[
+    data = {
+        "model": "phi3",
+        "temperature": 0.4,
+        "n": 1,
+        "messages": [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt},
-       ],)
-    text = response.choices[0].message.content
+        ],
+        "stream": False
+    }
+    
+    result = subprocess.run(
+        ['curl', '-X', 'POST', 'http://localhost:11434/v1/chat/completions',
+         '-H', 'Content-Type: application/json', '-H', 'Authorization: Bearer nokeyneeded',
+         '-d', json.dumps(data)],
+        capture_output=True,
+        text=True
+    )
+    
+    response = json.loads(result.stdout)
+    text = response['choices'][0]['message']['content']
     text = process_llm_response(text)
     print(text)
     pattern = r'\["([^"]+)",\s*({[^}]+})\]'
