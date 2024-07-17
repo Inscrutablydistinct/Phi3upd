@@ -222,7 +222,7 @@ def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=11
         n=1,
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": prompt},
+            {"role": "user", "content": "What is a supernova?"},
         ],
     )
     print("Response:")
