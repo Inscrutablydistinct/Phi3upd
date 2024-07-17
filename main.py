@@ -127,7 +127,7 @@ list_of_documents = text_split.text_split(d)
 
 # Initializing the OpenAI client
 client = openai.OpenAI(
-    base_url="http://4.188.251.18:11434/v1",
+    base_url="http://loaclhost:11434/v1",
     api_key="nokeyneeded",
 )
 
