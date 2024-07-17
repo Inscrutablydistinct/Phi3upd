@@ -12,7 +12,7 @@ def generate_md(Question, query, client):
     print(f"Prompt: {prompt}")  # Debugging statement
     response = client.chat.completions.create(
       model="phi3",
-      temperature=0.2,
+      temperature=0.4,
       n=1,
       messages=[
         {"role": "system", "content": "You are a helpful assistant."},
