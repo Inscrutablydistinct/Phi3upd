@@ -205,7 +205,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
             print(f"Error handling POST request: {str(e)}")
 
-def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=11434):
+def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=8000):
    
     response = client.chat.completions.create(
         model="phi3",
