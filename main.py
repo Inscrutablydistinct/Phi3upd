@@ -184,7 +184,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         post_data = self.rfile.read(content_length)
         query_data = urllib.parse.parse_qs(post_data.decode('utf-8'))
         query = query_data.get('query', [None])[0]
-
+        query = "I want the abstract of all the paper on double helixes in DNA."
         if query:
             start_time = time.time()
 
