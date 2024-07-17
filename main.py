@@ -218,7 +218,6 @@ def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=11
     )
     print("Response:")
     print(response.choices[0].message.content)
-    handler_class.do_POST()
     # server_address = ('', port)
     # httpd = server_class(server_address, handler_class)
     # print(f'Starting httpd server on port {port}...')
