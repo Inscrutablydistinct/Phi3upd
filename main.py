@@ -14,11 +14,6 @@ warnings.filterwarnings("ignore")
 
 with open('metadata.json') as f:
     d = json.load(f)
-
-client = openai.OpenAI(
-    base_url="http://4.188.251.18:11434/v1",
-    api_key="nokeyneeded",
-)
 Question = """Your task is to identify the attributes/features of the metadata from a given user query. The attributes/features you need to identify are:
 
 title
@@ -130,6 +125,12 @@ The answer should only be a list and no other content whatsoever. Please print t
 # Splitting documents
 list_of_documents = text_split.text_split(d)
 
+# Initializing the OpenAI client
+client = openai.OpenAI(
+    base_url="http://4.188.251.18:11434/v1",
+    api_key="nokeyneeded",
+)
+
 # Function to generate answer
 def ans(context, question):
     prompt = f"""
@@ -152,26 +153,15 @@ def ans(context, question):
     Question: {question}
     """
 
-    data = {
-        "model": "phi3",
-        "temperature": 0.4,
-        "n": 1,
-        "messages": [
+    response = client.chat.completions.create(
+        model="phi3",
+        temperature=0.4,
+        n=1,
+        messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt},
         ],
-        "stream": False
-    }
-    
-    result = subprocess.run(
-        ['curl', '-X', 'POST', 'http://4.188.251.18:11434/v1/chat/completions',
-         '-H', 'Content-Type: application/json', '-H', 'Authorization: Bearer nokeyneeded',
-         '-d', json.dumps(data)],
-        capture_output=True,
-        text=True
     )
-    
-    response = json.loads(result.stdout)
     answer = response['choices'][0]['message']['content']
     return answer
 
@@ -185,32 +175,42 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(b"Use POST method to interact with this server.")
 
     def do_POST(self):
-        content_length = int(self.headers['Content-Length'])
-        post_data = self.rfile.read(content_length)
-        query_data = urllib.parse.parse_qs(post_data.decode('utf-8'))
-        query = query_data.get('query', [None])[0]
-        query = "I want the abstract of all the paper on double helixes in DNA."
-        if query:
-            start_time = time.time()
+        try:
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            query_data = urllib.parse.parse_qs(post_data.decode('utf-8'))
+            query = "What is the abstract of the study about bone cancer in dinosaurs?"
+            #query_data.get('query', [None])[0]
 
-            out = generate_md(Question, query)
-            filtered_metadata = filter_data(d, out[1])
-            context = preprocess(make_context(list_of_documents, filtered_metadata[0], out))
-            answer = ans(context, out[0])
-            response_data = {
-                "answer": answer,
-                "source_document": filtered_metadata[0]['title'],
-                "time_taken": time.time() - start_time
-            }
-            self.send_response(200)
+            if query:
+                print("hello")
+                start_time = time.time()
+
+                out = generate_md(Question, query, client)
+                filtered_metadata = filter_data(d, out[1])
+                context = preprocess(make_context(list_of_documents, filtered_metadata[0], out))
+                answer = ans(context, out[0])
+                response_data = {
+                    "answer": answer,
+                    "source_document": filtered_metadata[0]['title'],
+                    "time_taken": time.time() - start_time
+                }
+                self.send_response(200)
+                self.send_header("Content-type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps(response_data).encode('utf-8'))
+            else:
+                print("hi")
+                self.send_response(400)
+                self.send_header("Content-type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": "No query provided"}).encode('utf-8'))
+        except Exception as e:
+            self.send_response(500)
             self.send_header("Content-type", "application/json")
             self.end_headers()
-            self.wfile.write(json.dumps(response_data).encode('utf-8'))
-        else:
-            self.send_response(400)
-            self.send_header("Content-type", "application/json")
-            self.end_headers()
-            self.wfile.write(json.dumps({"error": "No query provided"}).encode('utf-8'))
+            self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+            print(f"Error handling POST request: {str(e)}")
 
 def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=11434):
     server_address = ('', port)
