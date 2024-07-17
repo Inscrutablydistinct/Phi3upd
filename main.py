@@ -147,7 +147,7 @@ def ans(context, question):
     Question: {question}
     """
 
-     data = {
+    data = {
         "model": "phi3",
         "temperature": 0.4,
         "n": 1,
@@ -157,7 +157,7 @@ def ans(context, question):
         ],
         "stream": False
     }
-
+    
     result = subprocess.run(
         ['curl', '-X', 'POST', 'http://localhost:11434/v1/chat/completions',
          '-H', 'Content-Type: application/json', '-H', 'Authorization: Bearer nokeyneeded',
@@ -165,7 +165,7 @@ def ans(context, question):
         capture_output=True,
         text=True
     )
-
+    
     response = json.loads(result.stdout)
     answer = response['choices'][0]['message']['content']
     return answer
