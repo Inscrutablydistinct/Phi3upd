@@ -14,6 +14,11 @@ warnings.filterwarnings("ignore")
 
 with open('metadata.json') as f:
     d = json.load(f)
+
+client = openai.OpenAI(
+    base_url="http://4.188.251.18:11434/v1",
+    api_key="nokeyneeded",
+)
 Question = """Your task is to identify the attributes/features of the metadata from a given user query. The attributes/features you need to identify are:
 
 title
