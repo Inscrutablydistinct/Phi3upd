@@ -7,7 +7,7 @@ import json
 with open('metadata.json') as f:
     d = json.load(f)
 
-def generate_md(Question, query):
+def generate_md(Question, query, client):
     prompt = f"{Question}{query}"
     print(f"Prompt: {prompt}")  # Debugging statement
     response = client.chat.completions.create(
