@@ -178,8 +178,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
             query_data = urllib.parse.parse_qs(post_data.decode('utf-8'))
-            query = "What is the abstract of the study about bone cancer in dinosaurs?"
-            #query_data.get('query', [None])[0]
+            query = query_data.get('query', [None])[0]
 
             if query:
                 print("hello")
