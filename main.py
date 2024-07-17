@@ -125,12 +125,6 @@ The answer should only be a list and no other content whatsoever. Please print t
 # Splitting documents
 list_of_documents = text_split.text_split(d)
 
-# Initializing the OpenAI client
-client = openai.OpenAI(
-    base_url="http://localhost:11434/v1",
-    api_key="nokeyneeded",
-)
-
 # Function to generate answer
 def ans(context, question):
     prompt = f"""
@@ -153,15 +147,26 @@ def ans(context, question):
     Question: {question}
     """
 
-    response = client.chat.completions.create(
-        model="phi3",
-        temperature=0.4,
-        n=1,
-        messages=[
+     data = {
+        "model": "phi3",
+        "temperature": 0.4,
+        "n": 1,
+        "messages": [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt},
         ],
+        "stream": False
+    }
+
+    result = subprocess.run(
+        ['curl', '-X', 'POST', 'http://localhost:11434/v1/chat/completions',
+         '-H', 'Content-Type: application/json', '-H', 'Authorization: Bearer nokeyneeded',
+         '-d', json.dumps(data)],
+        capture_output=True,
+        text=True
     )
+
+    response = json.loads(result.stdout)
     answer = response['choices'][0]['message']['content']
     return answer
 
