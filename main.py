@@ -31,7 +31,7 @@ Note:
 - Separate the user query into the main query and the metadata attributes.
 - If the query includes a metadata attribute term (e.g., author) without a specific name, include it in the main query instead of identifying it as a metadata attribute.
 - The 'abstract' attribute should be present in all, but it shouldn't be more than 20 words long.
-- Give the answer at all costs but only include the identified attributes.
+- Give the answer at all costs.
 
 Examples:
 1. Query: "Can you tell me the authors of the paper titled 'An Alternative Source for Dark Energy'?”
