@@ -95,10 +95,6 @@ def ans(context, question):
     
     It is very important that you ALWAYS answer the question in the same language the question is in. Remember to always do that.
     
-    Your answer should not be more than {CFG.max_len} words long.
-    
-    The answer should be grammatically correct and start from the beginning of a sentence.
-    
     Use the following pieces of context to answer the question at the end.
     
     Context: {context}
