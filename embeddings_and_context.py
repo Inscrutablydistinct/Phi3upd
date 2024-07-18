@@ -23,6 +23,8 @@ def make_embeddings(list_of_documents):
         allow_dangerous_deserialization = True,)
     return vectordb
 
+vectordb = make_embeddings(list_of_documents)
+
 def find_similar(list_of_documents, top):
     filtered_indices = []
     title = top['title']
@@ -34,7 +36,6 @@ def find_similar(list_of_documents, top):
     return filtered_indices, filtered_documents
 
 def make_context(list_of_documents, top_md, out):
-    vectordb = make_embeddings(list_of_documents)
     filtered_indices, filtered_documents = find_similar(list_of_documents, top_md)
     if not filtered_indices:
         print("No documents found with the specified metadata.")
