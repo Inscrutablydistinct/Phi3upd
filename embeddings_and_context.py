@@ -3,7 +3,6 @@ from langchain_community.vectorstores import FAISS
 import os
 import re
 import numpy as np
-from filter_by_metadata import filter_data
 from sklearn.metrics.pairwise import cosine_similarity
 
 def make_embeddings(list_of_documents):
@@ -18,7 +17,6 @@ def make_embeddings(list_of_documents):
 
         vectordb.save_local(f"{CFG.Output_folder}/faiss_index_papers")
     else:
-        print("Loading embeddings...\n\n")
         vectordb = FAISS.load_local(CFG.Output_folder + '/faiss_index_papers', # from output folder
         embeddings,
         allow_dangerous_deserialization = True,)
@@ -34,11 +32,8 @@ def find_similar(list_of_documents, top):
             filtered_indices.append(idx)
     return filtered_indices, filtered_documents
 
-def make_context(list_of_documents, out):
+def make_context(list_of_documents, top_md, out):
     vectordb = make_embeddings(list_of_documents)
-    for doc in vectordb.docstore.values():
-        print(doc.metadata)
-    top_md = filter_data(out[1],vectordb)[0]
     filtered_indices, filtered_documents = find_similar(list_of_documents, top_md)
     if not filtered_indices:
         print("No documents found with the specified metadata.")
@@ -92,4 +87,3 @@ def remove_repeated_phrases(text, chunk_size=400, overlap=0.2):
             print(f"Skipped a repeated chunk: {chunk[:30]}...")
 
     return ' '.join(cleaned_tokens)
-
