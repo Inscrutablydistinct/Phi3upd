@@ -3,6 +3,7 @@ from langchain_community.vectorstores import FAISS
 import os
 import re
 import numpy as np
+from filter_by_metadata import filter_data
 from sklearn.metrics.pairwise import cosine_similarity
 
 def make_embeddings(list_of_documents):
