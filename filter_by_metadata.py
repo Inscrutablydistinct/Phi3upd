@@ -51,7 +51,7 @@ def filter_attributes(metadata_entry, key, value):
     else:
         return 0.0
 
-def filter_data(metadata, filter_dict):
+def filter_data(metadata, filter_dict, vectordb):
     scored_metadata = []
     store = {}
     temp = null;
