@@ -26,12 +26,12 @@ results
 
 Note:
 - All attributes except 'keywords' may or may not be present in the given query.
-- The main query should also have the keywords(if any).
+- The main query should be the input user query.
 - If a query specifies a date, include "<", ">", ">=", "<=", "=" to denote before, after, after and on, before and on, and on the publication date, respectively.
 - Separate the user query into the main query and the metadata attributes.
 - If the query includes a metadata attribute term (e.g., author) without a specific name, include it in the main query instead of identifying it as a metadata attribute.
 - The 'abstract' attribute should be present in all, but it shouldn't be more than 20 words long.
-- Give the output at all costs, always include the main query and the identified metadata attributes.
+- Give the output at all costs, always include the main query and the non empty/null identified metadata attributes.
 
 Examples:
 1. Query: "Can you tell me the authors of the paper titled 'An Alternative Source for Dark Energy'?”
