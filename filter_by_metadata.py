@@ -12,8 +12,7 @@ from transformers import (
 from datetime import datetime
 
 def compute_cosine_similarity(text1, text2):
-    embed1 = embeddings.embed_query(str(text1))
-    return cosine_similarity([embed1], [text2])[0][0]
+    return cosine_similarity([text1], [text2])[0][0]
 
 def filter_attributes(metadata_entry, key, value):
     if (key=='title'):
