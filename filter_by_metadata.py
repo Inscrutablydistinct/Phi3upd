@@ -54,7 +54,7 @@ def filter_data(filter_dict, vectordb):
     scored_metadata = []
     store = {}
     temp = null;
-    for doc in vectordb.docstore.values():
+    for doc_id, doc in vectordb.docstore._dict.items():
         if (doc.metadata == temp):
             break
         else:
