@@ -36,6 +36,8 @@ def find_similar(list_of_documents, top):
 
 def make_context(list_of_documents, out):
     vectordb = make_embeddings(list_of_documents)
+    for doc in vectordb.docstore.values():
+        print(doc.metadata)
     top_md = filter_data(out[1],vectordb)[0]
     filtered_indices, filtered_documents = find_similar(list_of_documents, top_md)
     if not filtered_indices:
