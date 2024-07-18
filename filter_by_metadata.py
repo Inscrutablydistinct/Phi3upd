@@ -11,7 +11,8 @@ from transformers import (
 from datetime import datetime
 
 def compute_cosine_similarity(text1, text2):
-    return cosine_similarity([text1], [text2])[0][0]
+    embed1 = embeddings.embed_query(str(text1))
+    return cosine_similarity([embed1], [text2])[0][0]
 
 def filter_attributes(metadata_entry, key, value):
     if (key=='title'):
@@ -50,27 +51,20 @@ def filter_attributes(metadata_entry, key, value):
     else:
         return 0.0
 
-def filter_data(filter_dict, vectordb):
+def filter_data(metadata, filter_dict):
     scored_metadata = []
     store = {}
-    temp = null;
-    for doc_id, doc in vectordb.docstore._dict.items():
-        if (doc.metadata == temp):
-            break
-        else:
-            total_score = 0.0
-            temp = doc.metadata
-            for key, value in filter_dict.items():
-                if key in store:
-                  total_score += filter_attributes(doc.metadata, key, store[key])
-                else:
-                    store[key] = embeddings.embed_query(value)
-                    total_score += filter_attributes(doc.metadata, key, store[key])
-            print(total_score)
-            scored_metadata.append((total_score, entry))
+    for entry in metadata:
+        total_score = 0.0
+        for key, value in filter_dict.items():
+            if key in store:
+              total_score += filter_attributes(entry, key, store[key])
+            else:
+                store[key] = embeddings.embed_query(value)
+                total_score += filter_attributes(entry, key, store[key])
+        print(total_score)
+        scored_metadata.append((total_score, entry))
 
     scored_metadata.sort(reverse=True, key=lambda x: x[0])
     top_results = [entry for _, entry in scored_metadata[:3]]
     return top_results
-
-
