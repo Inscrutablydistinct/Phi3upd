@@ -17,6 +17,7 @@ def make_embeddings(list_of_documents):
 
         vectordb.save_local(f"{CFG.Output_folder}/faiss_index_papers")
     else:
+        print("Loading embeddings...\n\n")
         vectordb = FAISS.load_local(CFG.Output_folder + '/faiss_index_papers', # from output folder
         embeddings,
         allow_dangerous_deserialization = True,)
