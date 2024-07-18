@@ -137,7 +137,6 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             query = request_data.get('messages', [None])[1].get('content')
 
             if query:
-                print("hello")
                 start_time = time.time()
 
                 out = generate_md(Question, query, client)
@@ -154,7 +153,6 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(json.dumps(response_data).encode('utf-8'))
             else:
-                print("hi")
                 self.send_response(400)
                 self.send_header("Content-type", "application/json")
                 self.end_headers()
