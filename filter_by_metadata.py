@@ -1,7 +1,6 @@
 import warnings
 warnings.filterwarnings("ignore")
 from model_param import embeddings
-from embeddings_and_context import make_embeddings
 from sklearn.metrics.pairwise import cosine_similarity
 import transformers
 from transformers import (
