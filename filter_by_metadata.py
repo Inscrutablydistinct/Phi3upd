@@ -58,8 +58,10 @@ def filter_data(metadata, filter_dict):
         total_score = 0.0
         for key, value in filter_dict.items():
             if key in store:
-              total_score += filter_attributes(entry, key, store[key])
+                print("hi")
+                total_score += filter_attributes(entry, key, store[key])
             else:
+                print("hello")
                 store[key] = embeddings.embed_query(value)
                 total_score += filter_attributes(entry, key, store[key])
         print(total_score)
