@@ -25,6 +25,29 @@ def make_embeddings(list_of_documents):
 
 vectordb = make_embeddings(list_of_documents)
 
+def filter_data(metadata, filter_dict):
+    scored_metadata = []
+    store = {}
+    temp = null;
+    for doc in vectordb.docstore.values():
+        if (doc.metadata == temp):
+            break
+        else:
+            total_score = 0.0
+            temp = doc.metadata
+            for key, value in filter_dict.items():
+                if key in store:
+                  total_score += filter_attributes(doc.metadata, key, store[key])
+                else:
+                    store[key] = embeddings.embed_query(value)
+                    total_score += filter_attributes(doc.metadata, key, store[key])
+            print(total_score)
+            scored_metadata.append((total_score, entry))
+
+    scored_metadata.sort(reverse=True, key=lambda x: x[0])
+    top_results = [entry for _, entry in scored_metadata[:3]]
+    return top_results
+
 def find_similar(list_of_documents, top):
     filtered_indices = []
     title = top['title']
