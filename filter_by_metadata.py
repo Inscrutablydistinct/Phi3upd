@@ -12,8 +12,7 @@ from datetime import datetime
 
 def compute_cosine_similarity(text1, text2):
     embed1 = embeddings.embed_query(str(text1))
-    embed2 = embeddings.embed_query(str(text2))
-    return cosine_similarity([embed1], [embed2])[0][0]
+    return cosine_similarity([embed1], [text2])[0][0]
 
 def filter_attributes(metadata_entry, key, value):
     if (key=='title'):
@@ -54,11 +53,15 @@ def filter_attributes(metadata_entry, key, value):
 
 def filter_data(metadata, filter_dict):
     scored_metadata = []
+    store = {}
     for entry in metadata:
         total_score = 0.0
         for key, value in filter_dict.items():
-            if key in entry:
-              total_score += filter_attributes(entry, key, value)
+            if key in store:
+              total_score += filter_attributes(entry, key, store[key])
+            else:
+                store[key] = embeddings.embed_query(value)
+                total_score += filter_attributes(entry, key, store[key])
         print(total_score)
         scored_metadata.append((total_score, entry))
 
