@@ -37,4 +37,3 @@ def generate_md(Question, query, client):
     else:
         print("No match found")
         return "[]"
-
