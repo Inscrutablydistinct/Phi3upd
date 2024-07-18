@@ -33,8 +33,9 @@ def find_similar(list_of_documents, top):
             filtered_indices.append(idx)
     return filtered_indices, filtered_documents
 
-def make_context(list_of_documents, top_md, out):
+def make_context(list_of_documents, out):
     vectordb = make_embeddings(list_of_documents)
+    top_md = filter_data(out[1],vectordb)[0]
     filtered_indices, filtered_documents = find_similar(list_of_documents, top_md)
     if not filtered_indices:
         print("No documents found with the specified metadata.")
