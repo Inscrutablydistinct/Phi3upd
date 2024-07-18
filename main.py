@@ -133,7 +133,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
             if query:
                 start_time = time.time()
-
+                out = generate_md(Question, query, client)
                 filtered_metadata = filter_data(d, out[1])
                 context = preprocess(make_context(list_of_documents, filtered_metadata[0], out))
                 answer = ans(context, out[0])
