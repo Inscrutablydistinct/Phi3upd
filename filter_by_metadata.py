@@ -1,6 +1,7 @@
 import warnings
 warnings.filterwarnings("ignore")
 from model_param import embeddings
+from embeddings_and_context import make_embeddings
 from sklearn.metrics.pairwise import cosine_similarity
 import transformers
 from transformers import (
@@ -51,22 +52,5 @@ def filter_attributes(metadata_entry, key, value):
     else:
         return 0.0
 
-def filter_data(metadata, filter_dict):
-    scored_metadata = []
-    store = {}
-    for entry in metadata:
-        total_score = 0.0
-        for key, value in filter_dict.items():
-            if key in store:
-              total_score += filter_attributes(entry, key, store[key])
-            else:
-                store[key] = embeddings.embed_query(value)
-                total_score += filter_attributes(entry, key, store[key])
-        print(total_score)
-        scored_metadata.append((total_score, entry))
-
-    scored_metadata.sort(reverse=True, key=lambda x: x[0])
-    top_results = [entry for _, entry in scored_metadata[:3]]
-    return top_results
 
 
