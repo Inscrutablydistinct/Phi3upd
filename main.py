@@ -2,9 +2,9 @@ from query_extraction import generate_md
 import text_split
 from model_param import CFG
 from embeddings_and_context import make_context
-# from filter_by_metadata import filter_data
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import urllib.parse
+from filter_by_metadata import filter_data
 from data_preprocess import preprocess
 import json
 import time 
@@ -26,12 +26,12 @@ results
 
 Note:
 - All attributes except 'keywords' may or may not be present in the given query.
-- The main query should be the input user query.
+- The main query should also have the keywords(if any).
 - If a query specifies a date, include "<", ">", ">=", "<=", "=" to denote before, after, after and on, before and on, and on the publication date, respectively.
-- From the user query make the main query and the metadata attributes.
+- Separate the user query into the main query and the metadata attributes.
 - If the query includes a metadata attribute term (e.g., author) without a specific name, include it in the main query instead of identifying it as a metadata attribute.
 - The 'abstract' attribute should be present in all, but it shouldn't be more than 20 words long.
-- Give the output at all costs, always include the main query and the non empty/null identified metadata attributes.
+- Give the output at all costs, always include the main query and the identified metadata attributes.
 
 Examples:
 1. Query: "Can you tell me the authors of the paper titled 'An Alternative Source for Dark Energy'?”
@@ -40,7 +40,7 @@ Examples:
    abstract: 'An Alternative Source for Dark Energy' 
    keywords: 'Alternative Source, Dark Energy'
    Main Query: "Can you tell me the authors of the paper."
-   Output: ["Can you tell me the authors of the paper titled 'An Alternative Source for Dark Energy'", {"title": "An Alternative Source for Dark Energy","abstract": "An Alternative Source for Dark Energy" ,"keywords": "Alternative Source, Dark Energy"}]
+   Output: ["Can you tell me the authors of the paper.", {"title": "An Alternative Source for Dark Energy","abstract": "An Alternative Source for Dark Energy" ,"keywords": "Alternative Source, Dark Energy"}]
 
 2. Query: "I need the abstract and results from the recent paper on DNA bending after 27 August 2024.”
    Identified Attributes:
@@ -48,7 +48,7 @@ Examples:
    publication_date: '27 August 2024'
    keywords: 'DNA bending'
    Main Query: "I need the abstract and results from the recent paper."
-   Output: ["I need the abstract and results from the recent paper on DNA bending after 27 August 2024.", {"abstract": "paper on DNA bending", "publication_date": ">2024-08-27", "keywords": "DNA bending"}]
+   Output: ["I need the abstract and results from the recent paper.", {"abstract": "paper on DNA bending", "publication_date": ">2024-08-27", "keywords": "DNA bending"}]
 
 3. Query: "I want the abstract of the research paper on Chain Theory written by Dr. Mazur.”
    Identified Attributes:
@@ -57,7 +57,7 @@ Examples:
    abstract: 'paper on Chain Theory'
    keywords: 'Chain Theory'
    Main Query: "I want the abstract of the research paper."
-   Output: ["I want the abstract of the research paper on Chain Theory written by Dr. Mazur.", {"title": "Chain Theory", "author": "Dr. Mazur", "abstract": "paper on Chain Theory","keywords": "Chain Theory"}]
+   Output: ["I want the abstract of the research paper.", {"title": "Chain Theory", "author": "Dr. Mazur", "abstract": "paper on Chain Theory","keywords": "Chain Theory"}]
 
 4. Query: "Please provide the title and abstract of the latest research paper by Dr. Lee published on 15 June 2023 about AI in healthcare."
    Identified Attributes:
@@ -66,7 +66,7 @@ Examples:
    publication_date: '15 June 2023'
    keywords: 'AI in healthcare'
    Main Query: "Please provide the title and abstract of the latest research paper."
-   Output: ["Please provide the title and abstract of the latest research paper about AI in healthcare.", {"author": "Dr. Lee", "abstract": "study on healthcare", "publication_date": "=2023-06-15", "keywords": "AI in healthcare"}]
+   Output: ["Please provide the title and abstract of the latest research paper.", {"author": "Dr. Lee", "abstract": "study on healthcare", "publication_date": "=2023-06-15", "keywords": "AI in healthcare"}]
 
 5. Query: "Give me a novel way to devise therapeutic drugs to treat cancer?"
    Identified Attributes:
@@ -134,9 +134,10 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
             if query:
                 start_time = time.time()
-                out = generate_md(Question, query, client)
 
-                context = preprocess(make_context(list_of_documents, out))
+                out = generate_md(Question, query, client)
+                filtered_metadata = filter_data(d, out[1])
+                context = preprocess(make_context(list_of_documents, filtered_metadata[0], out))
                 answer = ans(context, out[0])
                 response_data = {
                     "answer": answer,
