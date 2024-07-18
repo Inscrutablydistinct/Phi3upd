@@ -11,7 +11,7 @@ def generate_md(Question, query, client):
     prompt = f"{Question}{query}"
     print(f"Prompt: {prompt}")  # Debugging statement
     response = client.chat.completions.create(
-      model="phi3:3.8b",
+      model="phi3:latest",
       temperature=0.4,
       n=1,
       messages=[
