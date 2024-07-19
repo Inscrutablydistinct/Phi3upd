@@ -58,7 +58,9 @@ def filter_data(metadata, filter_dict):
     for entry in metadata:
         total_score = 0.0
         for key, value in filter_dict.items():
-            if (key in store or key == 'publication_date'):
+            if (key == 'publication_date'):
+                total_score += filter_attributes(entry, key, value)
+            elif key in store:
                 total_score += filter_attributes(entry, key, store[key])
             else:
                 store[key] = embeddings.embed_query(value)
