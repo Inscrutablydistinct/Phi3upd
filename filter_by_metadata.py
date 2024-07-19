@@ -17,15 +17,16 @@ def compute_cosine_similarity(text1, text2):
 def filter_attributes(metadata_entry, key, value):
     if (key=='title'):
         cos_sim = compute_cosine_similarity(metadata_entry['title'], value)
-        return cos_sim
+        return cos_sim*5
     elif (key == 'author'):
         cos_sim = compute_cosine_similarity(metadata_entry['author'], value)
+        return cos_sim*5
     elif (key == 'abstract'):
         cos_sim = compute_cosine_similarity(metadata_entry['abstract'], value)
-        return cos_sim
+        return cos_sim*5
     elif (key == 'keywords'):
         cos_sim = compute_cosine_similarity(metadata_entry['keywords'], value)
-        return cos_sim
+        return cos_sim*5
     elif (key == 'publication_date'):
         op = value[0] if value[1].isdigit() else value[0:2]
         value = value[len(op):]
