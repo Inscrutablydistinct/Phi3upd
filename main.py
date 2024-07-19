@@ -25,7 +25,7 @@ arxiv_id
 results
 
 Note:
-- The attribute 'keywords' must be non-empty and always present.
+- The attribute 'keywords' must be non-empty and always present in the final output.
 - The main query should be the input user query.
 - If a query specifies a date, include "<", ">", ">=", "<=", "=" to denote before, after, after and on, before and on, and on the publication date, respectively.
 - From the user query make the main query and the metadata attributes.
