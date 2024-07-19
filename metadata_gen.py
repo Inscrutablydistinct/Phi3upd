@@ -200,8 +200,8 @@ md = [{
         "ionizing radiation",
         "K-T extinction event"
     ],
-    "publication_date": None,  # Not explicitly provided in the text
-    "arxiv_id": None,  # Not provided in the text
+    "publication_date": "20-01-02",  # Not explicitly provided in the text
+    "arxiv_id": "N/A",  # Not provided in the text
     "results": "The rate of metastatic bone disease in the dinosaur fossil record is consistent with the predicted rate of bone metastasis in the dinosaur record. The probability of finding less than one cancer is 37% according to the reptilian cancer rate, and 71% according to the avian rate, so the observed event does not represent an elevated rate. We cannot negate the null hypothesis. Thus, there does not appear to be an elevated rate of bone cancer in the dinosaur fossil record."
 },{
     "title": "Approach to Physical Reality: a note on Poincaré Group and the philosophy of Nagarjuna",
@@ -218,7 +218,7 @@ md = [{
         "relational reality",
         "quantum mechanics"
     ],
-    "publication_date": "13 Apr 2007",
+    "publication_date": "2007-04-13",
     "arxiv_id": "0704.1665v1 [physics.gen-ph]",
     "results": "The paper explores the link between relational concepts in both Poincaré group transformations and Nagarjuna's sunyata philosophy. It concludes that both physical reality and our epistemological frameworks are fundamentally relational, rather than absolute. This approach suggests new considerations for fundamental problems in physics, such as the unification of laws and the continuum versus discrete views of reality."
 }
