@@ -27,10 +27,10 @@ def filter_attributes(metadata_entry, key, value):
         cos_sim = compute_cosine_similarity(metadata_entry['keywords'], value)
         return cos_sim
     elif (key == 'publication_date'):
+        print(metadata_entry['publication_date'])
         op = value[0] if value[1].isdigit() else value[0:2]
         value = value[len(op):]
         filter_date = datetime.strptime(value, "%Y-%m-%d")
-        print(filter_date)
         if metadata_entry['publication_date'] == "N/A":
             return 0.0
         entry_date = datetime.strptime(metadata_entry['publication_date'], "%Y-%m-%d")
