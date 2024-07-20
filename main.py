@@ -115,7 +115,18 @@ def ans(context, question):
         ],
     )
     return response.choices[0].message.content
- 
+
+def group_documents_by_metadata(vectordb):
+    grouped_docs = defaultdict(list)
+    
+    # Assuming vectordb has a method to get all documents
+    all_documents = vectordb.get_all_documents()
+    
+    for doc in all_documents:
+        metadata = tuple(doc.metadata.items())  # Convert metadata to a hashable type
+        grouped_docs[metadata].append(doc)
+    
+    return grouped_docs
     
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
