@@ -10,6 +10,7 @@ import json
 import time 
 import warnings
 import openai
+from collections import defaultdict
 warnings.filterwarnings("ignore")
 
 with open('metadata.json') as f:
